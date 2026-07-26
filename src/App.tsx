@@ -6,7 +6,7 @@ import ResultCard from "./components/ResultCard";
 import Loading from "./components/Loading";
 import ErrorCard from "./components/ErrorCard";
 
-import { dummyProfile, dummyErrors } from "./data/dummy";
+import { analyzeProfile } from "./services/api";
 import type { ProfileResponse } from "./types/profile";
 
 function App() {
@@ -21,19 +21,31 @@ function App() {
 
   const [error, setError] = useState("");
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
+    if (!username.trim()) {
+    setError("Username is required.");
+    setStatus("error");
+    return;
+  }
+
+    setError("");
+    setResult(null);
     setStatus("loading");
 
-    setTimeout(() => {
-      // Simulasi berhasil
-      setResult({
-        ...dummyProfile,
-        username: username || dummyProfile.username,
-      });
+    try {
+      const data = await analyzeProfile(username, language);
 
-      setError(dummyErrors.userNotFound);
+      setResult(data);
+      setStatus("success");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
+
       setStatus("error");
-    }, 2000);
+    }
   };
 
   return (
@@ -44,6 +56,7 @@ function App() {
         <ProfileForm
           username={username}
           language={language}
+          loading={status === "loading"}
           onUsernameChange={setUsername}
           onLanguageChange={setLanguage}
           onAnalyze={handleAnalyze}

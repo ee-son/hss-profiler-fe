@@ -1,6 +1,7 @@
 interface ProfileFormProps {
   username: string;
   language: string;
+  loading: boolean;
   onUsernameChange: (value: string) => void;
   onLanguageChange: (value: string) => void;
   onAnalyze: () => void;
@@ -9,6 +10,7 @@ interface ProfileFormProps {
 function ProfileForm({
     username,
     language,
+    loading,
     onUsernameChange,
     onLanguageChange,
     onAnalyze,
@@ -31,6 +33,7 @@ function ProfileForm({
             className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500"
             type="text"
             value={username}
+            disabled={loading}
             onChange={(e) => onUsernameChange(e.target.value)}
             placeholder="e.g. elonmusk"
           />
@@ -48,7 +51,7 @@ function ProfileForm({
           <select
             id="language"
             className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500"
-            defaultValue="id"
+            disabled={loading}
             value={language}
              onChange={(e) => onLanguageChange(e.target.value)}
           >
@@ -62,6 +65,7 @@ function ProfileForm({
         <button
           className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
           onClick={onAnalyze}
+          disabled={loading}
         >
           Analyze
         </button>
