@@ -42,7 +42,7 @@ function ResultCard({ data }: ResultCardProps) {
         <div className="flex justify-between">
           <span className="text-slate-500">Confidence</span>
           <span className="font-medium">
-            {(data.probability * 100).toFixed(2)}%
+            {(data.confidence * 100).toFixed(2)}%
           </span>
         </div>
 

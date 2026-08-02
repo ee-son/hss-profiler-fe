@@ -18,6 +18,7 @@ export async function analyzeProfile(
     body: JSON.stringify({
       username,
       language,
+      explain: true,
     }),
   });
 

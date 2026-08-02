@@ -3,7 +3,7 @@ export interface ProfileResponse {
   total_tweets: number;
   label: 0 | 1;
   class: "hate_speech" | "non_hate_speech";
-  probability: number;
+  confidence: number;
 }
 
 export interface ErrorResponse {
