@@ -1,11 +1,20 @@
+export interface ExplanationTweet {
+  tweet: string;
+  contribution: number;
+  confidence_without: number;
+}
+
+export interface Explanation {
+  baseline_confidence: number;
+  method: string;
+  top_tweets: ExplanationTweet[];
+}
+
 export interface ProfileResponse {
   username: string;
   total_tweets: number;
   label: 0 | 1;
   class: "hate_speech" | "non_hate_speech";
   confidence: number;
-}
-
-export interface ErrorResponse {
-  error: string;
+  explanation: Explanation;
 }
