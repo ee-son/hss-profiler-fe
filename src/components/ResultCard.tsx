@@ -53,13 +53,6 @@ function ResultCard({ data }: ResultCardProps) {
 
         <div className="space-y-2 mb-6">
           <div className="flex justify-between">
-            <span className="text-slate-500">Method</span>
-            <span className="font-medium">
-              {data.explanation.method}
-            </span>
-          </div>
-
-          <div className="flex justify-between">
             <span className="text-slate-500">
               Baseline Confidence
             </span>
@@ -82,11 +75,11 @@ function ResultCard({ data }: ResultCardProps) {
                   #{index + 1}
                 </p>
 
-                <p className="mb-4 whitespace-pre-wrap text-sm text-slate-800">
+                <p className="mb-4 pb-4 whitespace-pre-wrap text-left text-sm text-slate-800">
                   {tweet.tweet}
                 </p>
 
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between border-t border-slate-400 pt-4 text-sm">
                   <span className="text-slate-500">
                     Contribution
                   </span>

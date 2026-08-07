@@ -6,7 +6,6 @@ export interface ExplanationTweet {
 
 export interface Explanation {
   baseline_confidence: number;
-  method: string;
   top_tweets: ExplanationTweet[];
 }
 
