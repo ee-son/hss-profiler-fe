@@ -48,7 +48,7 @@ function ResultCard({ data }: ResultCardProps) {
 
         <hr className="my-6" />
         <h3 className="mb-4 text-lg font-semibold text-slate-800">
-          Explanation
+          Supporting Evidence
         </h3>
 
         <div className="space-y-2 mb-6">
