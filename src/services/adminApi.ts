@@ -38,7 +38,7 @@ export async function updateAdminProfile(
   const response = await fetch(
     `${API_URL}/api/admin/profiles/${encodeURIComponent(
       username
-    )}/${language}/update`,
+    )}/${language}`,
     {
       method: "POST",
       headers: getHeaders(apiKey),
