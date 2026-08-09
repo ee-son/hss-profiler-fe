@@ -46,6 +46,13 @@ function ResultCard({ data }: ResultCardProps) {
           </span>
         </div>
 
+        <div className="flex justify-between">
+          <span className="text-slate-500">Last Updated</span>
+          <span className="font-medium">
+            {new Date(data.last_updated).toLocaleString()}
+          </span>
+        </div>
+
         <hr className="my-6" />
         <h3 className="mb-4 text-lg font-semibold text-slate-800">
           Supporting Evidence

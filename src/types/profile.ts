@@ -13,6 +13,7 @@ export interface ProfileResponse {
   username: string;
   total_tweets: number;
   label: 0 | 1;
+  last_updated: string;
   class: "hate_speech" | "non_hate_speech";
   confidence: number;
   explanation: Explanation;
