@@ -17,6 +17,9 @@ import type { ProfileResponse } from "../types/profile";
 function AdminPage() {
   const [apiKey, setApiKey] = useState("");
 
+  const [authorized, setAuthorized] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
   const [profiles, setProfiles] = useState<
     AdminProfile[]
   >([]);
@@ -42,6 +45,8 @@ function AdminPage() {
 
   const loadProfiles = async () => {
     if (!apiKey.trim()) {
+      setAuthorized(false);
+      setProfiles([]);
       setError("Admin API key is required.");
       return;
     }
@@ -54,30 +59,74 @@ function AdminPage() {
       const data = await getAdminProfiles(apiKey);
 
       setProfiles(data.profiles || []);
+      setAuthorized(true);
     } catch (err) {
+      setAuthorized(false);
+      setProfiles([]);
+
+      sessionStorage.removeItem(
+        "admin_api_key"
+      );
+
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unexpected error occurred.");
+        setError("Invalid admin API key.");
       }
     } finally {
       setLoading(false);
+      setCheckingAuth(false);
     }
   };
 
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     if (!apiKey.trim()) {
       setError("Admin API key is required.");
       return;
     }
 
-    sessionStorage.setItem(
-      "admin_api_key",
-      apiKey
-    );
+    setError("");
+    setMessage("");
+    setLoading(true);
 
-    loadProfiles();
+    try {
+      const data = await getAdminProfiles(apiKey);
+
+      sessionStorage.setItem(
+        "admin_api_key",
+        apiKey
+      );
+
+      setProfiles(data.profiles || []);
+      setAuthorized(true);
+    } catch (err) {
+      setAuthorized(false);
+      setProfiles([]);
+
+      sessionStorage.removeItem(
+        "admin_api_key"
+      );
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Invalid admin API key.");
+      }
+    } finally {
+      setLoading(false);
+      setCheckingAuth(false);
+    }
+  };
+
+  const handleApiKeyChange = (value: string) => {
+    setApiKey(value);
+
+    // API key berubah → authorization lama dianggap tidak berlaku
+    setAuthorized(false);
+    setProfiles([]);
+    setError("");
+    setMessage("");
   };
 
   const handleView = async (
@@ -152,7 +201,6 @@ function AdminPage() {
     }
   };
 
-
   const handleDelete = async (
     username: string,
     language: string
@@ -202,17 +250,36 @@ function AdminPage() {
     }
   };
 
-
   useEffect(() => {
     const savedKey = sessionStorage.getItem(
       "admin_api_key"
     );
 
-    if (savedKey) {
-      setApiKey(savedKey);
+    if (!savedKey) {
+      setCheckingAuth(false);
+      return;
     }
-  }, []);
 
+    setApiKey(savedKey);
+
+    getAdminProfiles(savedKey)
+      .then((data) => {
+        setProfiles(data.profiles || []);
+        setAuthorized(true);
+      })
+      .catch(() => {
+        sessionStorage.removeItem(
+          "admin_api_key"
+        );
+
+        setApiKey("");
+        setProfiles([]);
+        setAuthorized(false);
+      })
+      .finally(() => {
+        setCheckingAuth(false);
+      });
+  }, []);
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
@@ -228,14 +295,12 @@ function AdminPage() {
           </p>
         </div>
 
-
         <AdminAuth
           apiKey={apiKey}
           loading={loading}
-          onApiKeyChange={setApiKey}
+          onApiKeyChange={handleApiKeyChange}
           onConnect={handleConnect}
         />
-
 
         {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
@@ -243,35 +308,33 @@ function AdminPage() {
           </div>
         )}
 
-
         {message && (
           <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
             {message}
           </div>
         )}
 
-
-        <AdminProfileTable
-          profiles={profiles}
-          loading={loading}
-          updating={updating}
-          deleting={deleting}
-          viewing={viewing}
-          onView={handleView}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-          onRefresh={loadProfiles}
-        />
+        {!checkingAuth && authorized && (
+          <AdminProfileTable
+            profiles={profiles}
+            loading={loading}
+            updating={updating}
+            deleting={deleting}
+            viewing={viewing}
+            onView={handleView}
+            onUpdate={handleUpdate}
+            onDelete={handleDelete}
+            onRefresh={loadProfiles}
+          />
+        )}
 
         <ProfileView
           profile={selectedProfile}
           onClose={() => setSelectedProfile(null)}
         />
-
       </div>
     </main>
   );
 }
-
 
 export default AdminPage;
