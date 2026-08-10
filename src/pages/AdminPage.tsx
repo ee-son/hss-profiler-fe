@@ -51,6 +51,8 @@ function AdminPage() {
       return;
     }
 
+    setAuthorized(false);
+    setProfiles([]);
     setLoading(true);
     setError("");
     setMessage("");
@@ -86,6 +88,8 @@ function AdminPage() {
       return;
     }
 
+    setAuthorized(false);
+    setProfiles([]);
     setError("");
     setMessage("");
     setLoading(true);
@@ -121,12 +125,6 @@ function AdminPage() {
 
   const handleApiKeyChange = (value: string) => {
     setApiKey(value);
-
-    // API key berubah → authorization lama dianggap tidak berlaku
-    setAuthorized(false);
-    setProfiles([]);
-    setError("");
-    setMessage("");
   };
 
   const handleView = async (
