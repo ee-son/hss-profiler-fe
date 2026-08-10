@@ -113,8 +113,12 @@ function AdminTable({
                       </button>
                     </td>
 
-                    <td className="px-6 py-4 uppercase text-slate-600">
-                      {profile.language}
+                    <td className="px-6 py-4 text-slate-600">
+                      {({
+                        id: "Indonesian",
+                        en: "English",
+                        es: "Spanish",
+                      } as Record<string, string>)[profile.language]}
                     </td>
 
                     <td className="px-6 py-4 text-slate-600">
