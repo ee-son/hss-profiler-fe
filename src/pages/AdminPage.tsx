@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 
 import AdminAuth from "../components/admin/AdminAuth";
 import AdminProfileTable from "../components/admin/AdminTable";
+import ProfileView from "../components/admin/ProfileView";
 
 import {
   getAdminProfiles,
+  getAdminProfile,
   updateAdminProfile,
   deleteAdminProfile,
 } from "../services/adminApi";
 
 import type { AdminProfile } from "../types/admin";
-
+import type { ProfileResponse } from "../types/profile";
 
 function AdminPage() {
   const [apiKey, setApiKey] = useState("");
@@ -18,6 +20,13 @@ function AdminPage() {
   const [profiles, setProfiles] = useState<
     AdminProfile[]
   >([]);
+
+  const [selectedProfile, setSelectedProfile] =
+  useState<ProfileResponse | null>(null);
+
+  const [viewing, setViewing] = useState<string | null>(
+    null
+  );
 
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState<string | null>(
@@ -71,6 +80,33 @@ function AdminPage() {
     loadProfiles();
   };
 
+  const handleView = async (
+    username: string,
+    language: string
+  ) => {
+    const key = `${username}-${language}`;
+
+    setViewing(key);
+    setError("");
+
+    try {
+      const data = await getAdminProfile(
+        apiKey,
+        username,
+        language
+      );
+
+      setSelectedProfile(data);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to load profile.");
+      }
+    } finally {
+      setViewing(null);
+    }
+  };
 
   const handleUpdate = async (
     username: string,
@@ -220,9 +256,16 @@ function AdminPage() {
           loading={loading}
           updating={updating}
           deleting={deleting}
+          viewing={viewing}
+          onView={handleView}
           onUpdate={handleUpdate}
           onDelete={handleDelete}
           onRefresh={loadProfiles}
+        />
+
+        <ProfileView
+          profile={selectedProfile}
+          onClose={() => setSelectedProfile(null)}
         />
 
       </div>

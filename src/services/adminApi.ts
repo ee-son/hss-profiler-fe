@@ -30,6 +30,32 @@ export async function getAdminProfiles(
   return data;
 }
 
+export async function getAdminProfile(
+  apiKey: string,
+  username: string,
+  language: string
+) {
+  const response = await fetch(
+    `${API_URL}/api/admin/profiles/${encodeURIComponent(
+      username
+    )}/${language}`,
+    {
+      method: "GET",
+      headers: getHeaders(apiKey),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Failed to load profile."
+    );
+  }
+
+  return data;
+}
+
 export async function updateAdminProfile(
   apiKey: string,
   username: string,

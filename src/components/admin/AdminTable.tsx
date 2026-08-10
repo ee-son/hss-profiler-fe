@@ -5,6 +5,7 @@ interface AdminTableProps {
   loading: boolean;
   updating: string | null;
   deleting: string | null;
+  viewing: string | null;
   onUpdate: (
     username: string,
     language: string
@@ -14,6 +15,10 @@ interface AdminTableProps {
     language: string
   ) => void;
   onRefresh: () => void;
+  onView: (
+    username: string,
+    language: string
+  ) => void;
 }
 
 function AdminTable({
@@ -21,6 +26,8 @@ function AdminTable({
   loading,
   updating,
   deleting,
+  viewing,
+  onView,
   onUpdate,
   onDelete,
   onRefresh,
@@ -90,8 +97,20 @@ function AdminTable({
                     key={key}
                     className="hover:bg-slate-50"
                   >
-                    <td className="px-6 py-4 font-medium text-slate-800">
-                      @{profile.username}
+                    <td className="px-6 py-4 font-medium">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onView(
+                            profile.username,
+                            profile.language
+                          )
+                        }
+                        disabled={viewing === key}
+                        className="text-slate-800 hover:text-blue-600 hover:underline disabled:opacity-50"
+                      >
+                        @{profile.username}
+                      </button>
                     </td>
 
                     <td className="px-6 py-4 uppercase text-slate-600">
