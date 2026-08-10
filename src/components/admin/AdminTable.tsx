@@ -120,7 +120,7 @@ function AdminTable({
                             updating === key ||
                             deleting === key
                           }
-                          className="rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {updating === key
                             ? "Updating..."
@@ -138,7 +138,7 @@ function AdminTable({
                             updating === key ||
                             deleting === key
                           }
-                          className="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="rounded-lg border bg-red-600 px-3 py-2 text-xs font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {deleting === key
                             ? "Deleting..."
