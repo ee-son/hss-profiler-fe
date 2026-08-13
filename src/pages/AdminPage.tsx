@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import AdminAuth from "../components/admin/AdminAuth";
 import AdminProfileTable from "../components/admin/AdminTable";
+import DeleteConfirm from "../components/admin/DeleteConfirm";
 import ProfileView from "../components/admin/ProfileView";
 
 import {
@@ -35,9 +36,14 @@ function AdminPage() {
   const [updating, setUpdating] = useState<string | null>(
     null
   );
+
   const [deleting, setDeleting] = useState<string | null>(
     null
   );
+  const [deleteTarget, setDeleteTarget] = useState<{
+    username: string;
+    language: string;
+  } | null>(null);
 
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -199,17 +205,25 @@ function AdminPage() {
     }
   };
 
-  const handleDelete = async (
+  const handleDelete = (
     username: string,
     language: string
   ) => {
-    const confirmed = window.confirm(
-      `Delete cached profile @${username} (${language})?`
-    );
+    setDeleteTarget({
+      username,
+      language,
+    });
+  };
 
-    if (!confirmed) {
+  const confirmDelete = async () => {
+    if (!deleteTarget) {
       return;
     }
+
+    const {
+      username,
+      language,
+    } = deleteTarget;
 
     const key = `${username}-${language}`;
 
@@ -237,11 +251,15 @@ function AdminPage() {
       setMessage(
         `Profile @${username} deleted successfully.`
       );
+
+      setDeleteTarget(null);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unexpected error occurred.");
+        setError(
+          "An unexpected error occurred."
+        );
       }
     } finally {
       setDeleting(null);
@@ -330,6 +348,23 @@ function AdminPage() {
           profile={selectedProfile}
           onClose={() => setSelectedProfile(null)}
         />
+
+        {deleteTarget && (
+          <DeleteConfirm
+            username={deleteTarget.username}
+            language={deleteTarget.language}
+            loading={
+              deleting ===
+              `${deleteTarget.username}-${deleteTarget.language}`
+            }
+            onConfirm={confirmDelete}
+            onCancel={() => {
+              if (!deleting) {
+                setDeleteTarget(null);
+              }
+            }}
+          />
+        )}
       </div>
     </main>
   );
