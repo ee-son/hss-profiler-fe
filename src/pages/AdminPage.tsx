@@ -48,6 +48,8 @@ function AdminPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  const [fadeError, setFadeError] = useState(false);
+  const [fadeMessage, setFadeMessage] = useState(false);
 
   const loadProfiles = async () => {
     if (!apiKey.trim()) {
@@ -266,6 +268,7 @@ function AdminPage() {
     }
   };
 
+  // Use effect api key
   useEffect(() => {
     const savedKey = sessionStorage.getItem(
       "admin_api_key"
@@ -297,6 +300,52 @@ function AdminPage() {
       });
   }, []);
 
+  // Use effect error
+  useEffect(() => {
+    if (!error) {
+      setFadeError(false);
+      return;
+    }
+
+    setFadeError(false);
+
+    const fadeTimer = setTimeout(() => {
+      setFadeError(true);
+    }, 2000);
+
+    const removeTimer = setTimeout(() => {
+      setError("");
+    }, 3000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [error]);
+
+  // Use effect message
+  useEffect(() => {
+    if (!message) {
+      setFadeMessage(false);
+      return;
+    }
+
+    setFadeMessage(false);
+
+    const fadeTimer = setTimeout(() => {
+      setFadeMessage(true);
+    }, 2000);
+
+    const removeTimer = setTimeout(() => {
+      setMessage("");
+    }, 3000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, [message]);
+
   return (
     <main className="min-h-screen bg-slate-100 p-6">
       <div className="mx-auto max-w-6xl">
@@ -319,13 +368,25 @@ function AdminPage() {
         />
 
         {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+          <div
+            className={`mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 transition-opacity duration-1000 ${
+              fadeError
+                ? "opacity-0"
+                : "opacity-100"
+            }`}
+          >
             {error}
           </div>
         )}
 
         {message && (
-          <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+          <div
+            className={`mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 transition-opacity duration-1000 ${
+              fadeMessage
+                ? "opacity-0"
+                : "opacity-100"
+            }`}
+          >
             {message}
           </div>
         )}
