@@ -70,6 +70,7 @@ function AdminPage() {
 
       setProfiles(data.profiles || []);
       setAuthorized(true);
+      setMessage("Profiles refreshed successfully.");
     } catch (err) {
       setAuthorized(false);
       setProfiles([]);
@@ -88,7 +89,6 @@ function AdminPage() {
       setCheckingAuth(false);
     }
   };
-
 
   const handleConnect = async () => {
     if (!apiKey.trim()) {
@@ -112,6 +112,7 @@ function AdminPage() {
 
       setProfiles(data.profiles || []);
       setAuthorized(true);
+      setMessage("Connected successfully.");
     } catch (err) {
       setAuthorized(false);
       setProfiles([]);
