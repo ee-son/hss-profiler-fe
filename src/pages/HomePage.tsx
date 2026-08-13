@@ -18,15 +18,14 @@ function HomePage() {
   >("idle");
 
   const [result, setResult] = useState<ProfileResponse | null>(null);
-
   const [error, setError] = useState("");
 
   const handleAnalyze = async () => {
     if (!username.trim()) {
-    setError("Username is required.");
-    setStatus("error");
-    return;
-  }
+      setError("Username is required.");
+      setStatus("error");
+      return;
+    }
 
     setError("");
     setResult(null);
@@ -34,6 +33,12 @@ function HomePage() {
 
     try {
       const data = await analyzeProfile(username, language);
+
+      if (!data.qualified) {
+        setError(data.message);
+        setStatus("error");
+        return;
+      }
 
       setResult(data);
       setStatus("success");

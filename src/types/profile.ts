@@ -10,6 +10,8 @@ export interface Explanation {
 }
 
 export interface ProfileResponse {
+  success: true;
+  qualified: true;
   username: string;
   total_tweets: number;
   label: 0 | 1;
@@ -18,3 +20,14 @@ export interface ProfileResponse {
   confidence: number;
   explanation: Explanation;
 }
+
+export interface InsufficientTweetsResponse {
+  success: false;
+  qualified: false;
+  message: string;
+  tweet_count: number;
+}
+
+export type AnalyzeProfileResponse =
+  | ProfileResponse
+  | InsufficientTweetsResponse;
