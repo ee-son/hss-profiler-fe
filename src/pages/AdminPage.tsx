@@ -316,7 +316,7 @@ function AdminPage() {
 
     const removeTimer = setTimeout(() => {
       setError("");
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearTimeout(fadeTimer);
@@ -339,7 +339,7 @@ function AdminPage() {
 
     const removeTimer = setTimeout(() => {
       setMessage("");
-    }, 3000);
+    }, 5000);
 
     return () => {
       clearTimeout(fadeTimer);
