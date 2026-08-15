@@ -31,6 +31,7 @@ function AdminPage() {
   const [totalProfiles, setTotalProfiles] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
 
   const [sortBy, setSortBy] = useState<
@@ -75,6 +76,9 @@ function AdminPage() {
       return;
     }
 
+    setSearch(searchInput);
+    setPage(1);
+
     setAuthorized(false);
     setProfiles([]);
     setLoading(true);
@@ -85,7 +89,7 @@ function AdminPage() {
       const data = await getAdminProfiles(apiKey, {
         page,
         per_page: perPage,
-        search,
+        search: searchInput,
         sort_by: sortBy,
         sort_order: sortOrder,
       });
@@ -270,8 +274,7 @@ function AdminPage() {
   const handleSearchChange = (
     value: string
   ) => {
-    setSearch(value);
-    setPage(1);
+    setSearchInput(value);
   };
 
   const handleSort = (
@@ -424,7 +427,6 @@ function AdminPage() {
     load();
   }, [
     page,
-    search,
     sortBy,
     sortOrder,
   ]);
@@ -527,7 +529,7 @@ function AdminPage() {
             updating={updating}
             deleting={deleting}
             viewing={viewing}
-            search={search}
+            search={searchInput}
             sortBy={sortBy}
             sortOrder={sortOrder}
             page={page}
