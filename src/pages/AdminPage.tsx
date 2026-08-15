@@ -25,6 +25,22 @@ function AdminPage() {
     AdminProfile[]
   >([]);
 
+  const [page, setPage] = useState(1);
+  const [perPage] = useState(10);
+
+  const [totalProfiles, setTotalProfiles] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const [search, setSearch] = useState("");
+
+  const [sortBy, setSortBy] = useState<
+    "username" | "language"| "last_updated"
+  >("username");
+
+  const [sortOrder, setSortOrder] = useState<
+    "asc" | "desc"
+  >("asc");
+
   const [selectedProfile, setSelectedProfile] =
   useState<ProfileResponse | null>(null);
 
@@ -66,9 +82,19 @@ function AdminPage() {
     setMessage("");
 
     try {
-      const data = await getAdminProfiles(apiKey);
+      const data = await getAdminProfiles(apiKey, {
+        page,
+        per_page: perPage,
+        search,
+        sort_by: sortBy,
+        sort_order: sortOrder,
+      });
 
       setProfiles(data.profiles || []);
+
+      setTotalProfiles(data.pagination.total);
+      setTotalPages(data.pagination.total_pages);
+
       setAuthorized(true);
       setMessage("Profiles refreshed successfully.");
     } catch (err) {
@@ -103,7 +129,13 @@ function AdminPage() {
     setLoading(true);
 
     try {
-      const data = await getAdminProfiles(apiKey);
+      const data = await getAdminProfiles(apiKey, {
+        page,
+        per_page: perPage,
+        search,
+        sort_by: sortBy,
+        sort_order: sortOrder,
+      });
 
       sessionStorage.setItem(
         "admin_api_key",
@@ -111,6 +143,10 @@ function AdminPage() {
       );
 
       setProfiles(data.profiles || []);
+
+      setTotalProfiles(data.pagination.total);
+      setTotalPages(data.pagination.total_pages);
+
       setAuthorized(true);
       setMessage("Connected successfully.");
     } catch (err) {
@@ -218,6 +254,44 @@ function AdminPage() {
     });
   };
 
+  const handlePageChange = (
+    newPage: number
+  ) => {
+    if (
+      newPage < 1 ||
+      newPage > totalPages
+    ) {
+      return;
+    }
+
+    setPage(newPage);
+  };
+
+  const handleSearchChange = (
+    value: string
+  ) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleSort = (
+    column: "username" | "language" | "last_updated"
+  ) => {
+    if (sortBy === column) {
+      setSortOrder((current) =>
+        current === "asc"
+          ? "desc"
+          : "asc"
+      );
+    } else {
+      setSortBy(column);
+      setSortOrder("asc");
+    }
+
+    setPage(1);
+  };
+
+  // Delete confirmation using modal/dialogue
   const confirmDelete = async () => {
     if (!deleteTarget) {
       return;
@@ -282,9 +356,17 @@ function AdminPage() {
 
     setApiKey(savedKey);
 
-    getAdminProfiles(savedKey)
+    getAdminProfiles(savedKey, {
+      page,
+      per_page: perPage,
+      search,
+      sort_by: sortBy,
+      sort_order: sortOrder,
+    })
       .then((data) => {
         setProfiles(data.profiles || []);
+        setTotalProfiles(data.pagination.total);
+        setTotalPages(data.pagination.total_pages);
         setAuthorized(true);
       })
       .catch(() => {
@@ -300,6 +382,52 @@ function AdminPage() {
         setCheckingAuth(false);
       });
   }, []);
+
+  // Use effect pagination, search, and sorting
+  useEffect(() => {
+    if (!authorized || !apiKey.trim()) {
+      return;
+    }
+
+    const load = async () => {
+      setLoading(true);
+
+      try {
+        const data = await getAdminProfiles(apiKey, {
+          page,
+          per_page: perPage,
+          search,
+          sort_by: sortBy,
+          sort_order: sortOrder,
+        });
+
+        setProfiles(data.profiles || []);
+
+        setTotalProfiles(
+          data.pagination.total
+        );
+
+        setTotalPages(
+          data.pagination.total_pages
+        );
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Failed to load profiles.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [
+    page,
+    search,
+    sortBy,
+    sortOrder,
+  ]);
 
   // Use effect error
   useEffect(() => {
@@ -399,10 +527,19 @@ function AdminPage() {
             updating={updating}
             deleting={deleting}
             viewing={viewing}
+            search={search}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            page={page}
+            totalPages={totalPages}
+            totalProfiles={totalProfiles}
             onView={handleView}
             onUpdate={handleUpdate}
             onDelete={handleDelete}
             onRefresh={loadProfiles}
+            onSearchChange={handleSearchChange}
+            onSort={handleSort}
+            onPageChange={handlePageChange}
           />
         )}
 

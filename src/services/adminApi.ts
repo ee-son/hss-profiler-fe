@@ -9,11 +9,47 @@ const getHeaders = (apiKey: string) => ({
   "X-Admin-Key": apiKey,
 });
 
+export interface AdminProfileQuery {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  sort_by?: "username" | "language" | "last_updated";
+  sort_order?: "asc" | "desc";
+}
+
+
 export async function getAdminProfiles(
-  apiKey: string
+  apiKey: string,
+  params: AdminProfileQuery = {}
 ): Promise<AdminProfilesResponse> {
+  const query = new URLSearchParams();
+
+  if (params.page !== undefined) {
+    query.set("page", String(params.page));
+  }
+
+  if (params.per_page !== undefined) {
+    query.set("per_page", String(params.per_page));
+  }
+
+  if (params.search) {
+    query.set("search", params.search);
+  }
+
+  if (params.sort_by) {
+    query.set("sort_by", params.sort_by);
+  }
+
+  if (params.sort_order) {
+    query.set("sort_order", params.sort_order);
+  }
+
+  const queryString = query.toString();
+
   const response = await fetch(
-    `${API_URL}/api/admin/profiles`,
+    `${API_URL}/api/admin/profiles${
+      queryString ? `?${queryString}` : ""
+    }`,
     {
       headers: getHeaders(apiKey),
     }

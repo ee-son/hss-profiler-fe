@@ -2,31 +2,68 @@ import type { AdminProfile } from "../../types/admin";
 
 interface AdminTableProps {
   profiles: AdminProfile[];
+
   loading: boolean;
   updating: string | null;
   deleting: string | null;
   viewing: string | null;
-  onUpdate: (
-    username: string,
-    language: string
+
+  search: string;
+
+  sortBy: "username" | "language" | "last_updated";
+  sortOrder: "asc" | "desc";
+
+  page: number;
+  totalProfiles: number;
+  totalPages: number;
+
+  onSearchChange: (value: string) => void;
+
+  onSort: (
+    column: "username" | "language" | "last_updated"
   ) => void;
-  onDelete: (
-    username: string,
-    language: string
+
+  onPageChange: (
+    newPage: number
   ) => void;
-  onRefresh: () => void;
+
   onView: (
     username: string,
     language: string
   ) => void;
+
+  onUpdate: (
+    username: string,
+    language: string
+  ) => void;
+
+  onDelete: (
+    username: string,
+    language: string
+  ) => void;
+
+  onRefresh: () => void;
 }
 
-function AdminTable({
+function AdminProfileTable({
   profiles,
   loading,
   updating,
   deleting,
   viewing,
+
+  search,
+  sortBy,
+  sortOrder,
+
+  page,
+  totalProfiles,
+  totalPages,
+
+  onSearchChange,
+  onSort,
+  onPageChange,
+
   onView,
   onUpdate,
   onDelete,
@@ -35,25 +72,37 @@ function AdminTable({
   return (
     <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="border-b border-slate-200 px-6 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-800">
               Cached Profiles
             </h2>
 
             <p className="text-sm text-slate-500">
-              {profiles.length} profile
-              {profiles.length !== 1 ? "s" : ""}
+              {totalProfiles} profile
+              {totalProfiles !== 1 ? "s" : ""}
             </p>
           </div>
 
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Refresh List
-          </button>
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) =>
+                onSearchChange(e.target.value)
+              }
+              placeholder="Search username..."
+              className="w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+            <button
+              onClick={onRefresh}
+              disabled={loading}
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Refresh List
+            </button>
+          </div>
         </div>
       </div>
 
@@ -61,7 +110,7 @@ function AdminTable({
         <div className="p-8 text-center text-slate-500">
           Loading profiles...
         </div>
-      ) : profiles.length === 0 ? (
+      ) : totalProfiles === 0 ? (
         <div className="p-8 text-center text-slate-500">
           No cached profiles found.
         </div>
@@ -71,15 +120,45 @@ function AdminTable({
             <thead className="bg-slate-50 text-slate-500">
               <tr>
                 <th className="px-6 py-4 font-medium">
-                  Username
+                  <button
+                    type="button"
+                    onClick={() => onSort("username")}
+                    className="flex items-center gap-1 hover:text-slate-800"
+                  >
+                    Username
+                    {sortBy === "username" && (
+                      <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
                 </th>
 
                 <th className="px-6 py-4 font-medium">
-                  Language
+                  <button
+                    type="button"
+                    onClick={() => onSort("language")}
+                    className="flex items-center gap-1 hover:text-slate-800"
+                  >
+                    Language
+                    {sortBy === "language" && (
+                      <span>{sortOrder === "asc" ? "↑" : "↓"}</span>
+                    )}
+                  </button>
                 </th>
 
                 <th className="px-6 py-4 font-medium">
-                  Last Updated
+                  <button
+                    type="button"
+                    onClick={() => onSort("last_updated")}
+                    className="flex items-center gap-1 hover:text-slate-800"
+                  >
+                    Last Updated
+
+                    {sortBy === "last_updated" && (
+                      <span>
+                        {sortOrder === "asc" ? "↑" : "↓"}
+                      </span>
+                    )}
+                  </button>
                 </th>
 
                 <th className="px-6 py-4 text-right font-medium">
@@ -174,10 +253,39 @@ function AdminTable({
               })}
             </tbody>
           </table>
+          <div className="flex items-center justify-between border-t border-slate-200 px-6 py-4">
+            <p className="text-sm text-slate-500">
+              Page {page} of {totalPages}
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onPageChange(page - 1)}
+                disabled={page <= 1 || loading}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <span className="px-2 text-sm text-slate-600">
+                {page}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => onPageChange(page + 1)}
+                disabled={page >= totalPages || loading}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </section>
   );
 }
 
-export default AdminTable;
+export default AdminProfileTable;
