@@ -4,13 +4,13 @@ interface ErrorResponse {
   error: string;
 }
 
-const API_URL = "http://13.211.238.53:5000/";
+const API_URL = "/api";
 
 export async function analyzeProfile(
   username: string,
   language: string
 ): Promise<AnalyzeProfileResponse> {
-  const response = await fetch(`${API_URL}/api/profile`, {
+  const response = await fetch(`${API_URL}/profile`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -3,7 +3,7 @@ import type {
   AdminUpdateResponse,
 } from "../types/admin";
 
-const API_URL = "http://13.211.238.53:5000/";
+const API_URL = "/api";
 
 const getHeaders = (apiKey: string) => ({
   "X-Admin-Key": apiKey,
@@ -16,7 +16,6 @@ export interface AdminProfileQuery {
   sort_by?: "username" | "language" | "last_updated";
   sort_order?: "asc" | "desc";
 }
-
 
 export async function getAdminProfiles(
   apiKey: string,
@@ -51,6 +50,7 @@ export async function getAdminProfiles(
       queryString ? `?${queryString}` : ""
     }`,
     {
+      method: "GET",
       headers: getHeaders(apiKey),
     }
   );
@@ -74,7 +74,7 @@ export async function getAdminProfile(
   const response = await fetch(
     `${API_URL}/api/admin/profiles/${encodeURIComponent(
       username
-    )}/${language}`,
+    )}/${encodeURIComponent(language)}`,
     {
       method: "GET",
       headers: getHeaders(apiKey),
@@ -100,7 +100,7 @@ export async function updateAdminProfile(
   const response = await fetch(
     `${API_URL}/api/admin/profiles/${encodeURIComponent(
       username
-    )}/${language}`,
+    )}/${encodeURIComponent(language)}`,
     {
       method: "POST",
       headers: getHeaders(apiKey),
@@ -126,7 +126,7 @@ export async function deleteAdminProfile(
   const response = await fetch(
     `${API_URL}/api/admin/profiles/${encodeURIComponent(
       username
-    )}/${language}`,
+    )}/${encodeURIComponent(language)}`,
     {
       method: "DELETE",
       headers: getHeaders(apiKey),
