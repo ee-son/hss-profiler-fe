@@ -4,7 +4,7 @@ interface ErrorResponse {
   error: string;
 }
 
-const API_URL = "http://localhost:5000";
+const API_URL = "http://13.211.238.53:5000/";
 
 export async function analyzeProfile(
   username: string,

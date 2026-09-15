@@ -3,7 +3,7 @@ import type {
   AdminUpdateResponse,
 } from "../types/admin";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "http://13.211.238.53:5000/";
 
 const getHeaders = (apiKey: string) => ({
   "X-Admin-Key": apiKey,
