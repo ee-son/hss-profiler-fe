@@ -46,7 +46,7 @@ export async function getAdminProfiles(
   const queryString = query.toString();
 
   const response = await fetch(
-    `${API_URL}/api/admin/profiles${
+    `${API_URL}/admin/profiles${
       queryString ? `?${queryString}` : ""
     }`,
     {
@@ -72,7 +72,7 @@ export async function getAdminProfile(
   language: string
 ) {
   const response = await fetch(
-    `${API_URL}/api/admin/profiles/${encodeURIComponent(
+    `${API_URL}/admin/profiles/${encodeURIComponent(
       username
     )}/${encodeURIComponent(language)}`,
     {
@@ -98,7 +98,7 @@ export async function updateAdminProfile(
   language: string
 ): Promise<AdminUpdateResponse> {
   const response = await fetch(
-    `${API_URL}/api/admin/profiles/${encodeURIComponent(
+    `${API_URL}/admin/profiles/${encodeURIComponent(
       username
     )}/${encodeURIComponent(language)}`,
     {
@@ -124,7 +124,7 @@ export async function deleteAdminProfile(
   language: string
 ) {
   const response = await fetch(
-    `${API_URL}/api/admin/profiles/${encodeURIComponent(
+    `${API_URL}/admin/profiles/${encodeURIComponent(
       username
     )}/${encodeURIComponent(language)}`,
     {
